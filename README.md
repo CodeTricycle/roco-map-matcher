@@ -10,8 +10,6 @@ roco/
 ├── split_bitmap.py      # 瓦片分割脚本 - 将大图切割为瓦片
 ├── config.json          # 运行配置文件（自动生成）
 ├── requirements.txt     # Python依赖
-├── categories.json      # 分类数据
-├── mark.json            # 标注数据
 ├── big_map.png          # 原始大地图（用于分割）
 ├── big_map_mark.png     # 标注大地图（用于分割）
 ├── images/              # 原图瓦片文件夹
@@ -31,8 +29,6 @@ roco/
 | `main.py` | 主程序，包含 SIFT 匹配器 GUI（截图配置、匹配参数、实时预览、置顶显示） |
 | `split_bitmap.py` | 瓦片分割工具，将 `big_map.png` 和 `big_map_mark.png` 切割为 256×256 瓦片 |
 | `config.json` | 运行时自动生成的配置文件，保存截图区域和匹配参数 |
-| `categories.json` | 分类数据 |
-| `mark.json` | 标注点位数据 |
 | `images/` | 原图瓦片目录，文件名格式 `x_y.png`，用于 SIFT 特征匹配 |
 | `mark/` | 标注瓦片目录，与 images 同名文件对应，匹配成功后用于显示 |
 
