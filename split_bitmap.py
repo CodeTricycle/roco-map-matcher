@@ -42,5 +42,4 @@ def split_bitmap(bitmap_path, output_dir, x_start=X_START, y_start=Y_START):
 
 
 if __name__ == '__main__':
-    split_bitmap("big_map_mark.png","mark")
     split_bitmap("big_map.png","images")
