@@ -327,7 +327,7 @@ class MatchThread(QThread):
                 m, n = pair
                 if m.distance < ratio * n.distance:
                     good.append(m)
-        min_good = self.config.get('min_good_matches', 3)
+        min_good = self.config.get('min_good_matches', 5)
         if len(good) < min_good:
             return {'screenshot': shot_bgr, 'match': None}
         tile_abs_positions = {}
@@ -505,7 +505,7 @@ class MatchTab(QWidget):
         self.spin_ratio.setValue(self.config.get("ratio_threshold", 0.75))
         self.spin_min_matches = QSpinBox()
         self.spin_min_matches.setRange(1, 100)
-        self.spin_min_matches.setValue(self.config.get("min_good_matches", 3))
+        self.spin_min_matches.setValue(self.config.get("min_good_matches", 5))
         self.chk_fps = QCheckBox("显示帧数")
         self.chk_fps.setChecked(self.config.get("show_fps", False))
         m_form.addRow("SIFT特征数:", self.spin_nfeatures)
@@ -923,7 +923,7 @@ class MainWindow(QMainWindow):
         return {
             "top": 60, "left": 2293, "width": 223, "height": 223,
             "sift_nfeatures": 1000,
-            "ratio_threshold": 0.75, "min_good_matches": 3,
+            "ratio_threshold": 0.75, "min_good_matches": 5,
             "show_fps": False
         }
 

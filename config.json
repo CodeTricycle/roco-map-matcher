@@ -6,7 +6,7 @@
   "match_interval": 500,
   "sift_nfeatures": 1000,
   "ratio_threshold": 0.75,
-  "min_good_matches": 3,
+  "min_good_matches": 5,
   "template_threshold": 0.4,
   "show_fps": true
 }
