@@ -518,14 +518,10 @@ class MatchTab(QWidget):
         btn_layout = QHBoxLayout()
         self.btn_load = QPushButton("加载瓦片")
         self.btn_load.clicked.connect(self._on_load)
-        self.btn_reload = QPushButton("重载瓦片")
-        self.btn_reload.clicked.connect(self._on_reload)
-        self.btn_reload.setEnabled(False)
         self.btn_start = QPushButton("开始匹配")
         self.btn_start.clicked.connect(self._on_toggle)
         self.btn_start.setEnabled(False)
         btn_layout.addWidget(self.btn_load)
-        btn_layout.addWidget(self.btn_reload)
         btn_layout.addWidget(self.btn_start)
         layout.addLayout(btn_layout)
 
@@ -559,28 +555,7 @@ class MatchTab(QWidget):
         n_des = len(self.tile_manager.desc_to_tile)
         self.status_label.setText(f"加载完成: {n_img}原图, {n_mark}标注, {n_des}特征点")
         self.btn_load.setEnabled(True)
-        self.btn_reload.setEnabled(True)
         self.btn_start.setEnabled(True)
-
-    def _on_reload(self):
-        self.btn_reload.setEnabled(False)
-        self.status_label.setText("正在重载瓦片...")
-        QApplication.processEvents()
-        self.tile_manager.tiles_gray.clear()
-        self.tile_manager.mark_tiles.clear()
-        self.tile_manager.keypoints.clear()
-        self.tile_manager.descriptors.clear()
-        self.tile_manager.desc_to_tile.clear()
-        nfeatures = self.spin_nfeatures.value()
-        self.tile_manager.load(
-            nfeatures=nfeatures,
-            progress_cb=lambda msg: (self.status_label.setText(msg), QApplication.processEvents())
-        )
-        n_img = len(self.tile_manager.tiles_gray)
-        n_mark = len(self.tile_manager.mark_tiles)
-        n_des = len(self.tile_manager.desc_to_tile)
-        self.status_label.setText(f"重载完成: {n_img}原图, {n_mark}标注, {n_des}特征点")
-        self.btn_reload.setEnabled(True)
 
     def _on_toggle(self):
         if self.match_thread is not None and self.match_thread.isRunning():
