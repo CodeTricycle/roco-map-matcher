@@ -1,119 +1,175 @@
-# SIFT 瓦片地图匹配器
+# 洛克王国世界地图工具集
 
-基于 SIFT 特征匹配的实时瓦片地图识别与标注显示工具。截取屏幕指定区域，通过 SIFT + FLANN 快速匹配对应瓦片，并在置顶窗口中显示标注图。
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
+[![PyQt6](https://img.shields.io/badge/PyQt6-6.6+-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.8+-orange.svg)](https://opencv.org/)
 
-## 项目结构
+一个专为《洛克王国：世界》游戏开发的地图工具集，包含地图数据爬取、瓦片拼接、实时位置匹配等功能。
+
+---
+
+## 📦 项目结构
 
 ```
 roco/
-├── main.py              # 主程序 - 洛克王国地图匹配器GUI
-├── split_bitmap.py      # 瓦片分割脚本 - 将大图切割为瓦片
-├── config.json          # 运行配置文件（自动生成）
-├── requirements.txt     # Python依赖
-├── big_map.png          # 原始大地图（用于分割）
-├── big_map_mark.png     # 标注大地图（用于分割）
-├── images/              # 原图瓦片文件夹
-│   ├── -12_-9.png
-│   ├── -12_-8.png
-│   └── ...
-└── mark/                # 标注瓦片文件夹
-    ├── -12_-9.png
-    ├── -12_-8.png
-    └── ...
+├── crawler.py          # 地图爬虫：下载瓦片、拼接大图、拉取标记数据
+├── main.py             # 地图匹配器GUI主程序
+├── config.json         # 应用程序配置文件
+├── categories.json     # 标记分类数据
+├── map_info.json       # 地图元数据（瓦片范围、尺寸等）
+├── mark.json           # 游戏标记点数据（魔力之源、宠物位置等）
+├── big_map.png         # 拼接后的完整地图
+├── requirements.txt    # Python依赖
+└── roco.spec           # PyInstaller打包配置
 ```
 
-## 文件说明
+---
 
-| 文件 | 说明 |
-|------|------|
-| `main.py` | 主程序，包含 SIFT 匹配器 GUI（截图配置、匹配参数、实时预览、置顶显示） |
-| `split_bitmap.py` | 瓦片分割工具，将 `big_map.png` 和 `big_map_mark.png` 切割为 256×256 瓦片 |
-| `config.json` | 运行时自动生成的配置文件，保存截图区域和匹配参数 |
-| `images/` | 原图瓦片目录，文件名格式 `x_y.png`，用于 SIFT 特征匹配 |
-| `mark/` | 标注瓦片目录，与 images 同名文件对应，匹配成功后用于显示 |
+## 🚀 功能特性
 
-## 依赖安装
+### 1. 地图数据爬取 (`crawler.py`)
 
-**环境要求：Python 3.12**
+- **瓦片下载**：从 17173 CDN 并发下载地图瓦片
+- **大图拼接**：使用 Pillow 将瓦片拼接成完整地图
+- **标记数据拉取**：从官方 API 获取游戏内标记点（魔力之源、宠物等）
+- **坐标转换**：将经纬度自动转换为像素坐标
+
+```bash
+# 默认 zoom=13，全套跑一遍
+python crawler.py
+
+# 指定 zoom 级别
+python crawler.py --zoom 11
+
+# 只刷新标记数据（跳过瓦片下载）
+python crawler.py --skip-tiles
+
+# 只下载瓦片（跳过标记拉取）
+python crawler.py --skip-marks
+```
+
+### 2. 实时地图匹配器 (`main.py`)
+
+基于 PyQt6 开发的 GUI 应用程序，提供两个核心功能：
+
+#### 🎯 匹配模式
+
+- **实时屏幕捕获**：使用 MSS 捕获指定屏幕区域
+- **SIFT 特征匹配**：基于 OpenCV SIFT 算法实时匹配游戏画面与地图
+- **位置稳定器**：平滑算法防止位置抖动
+- **实时预览**：悬浮窗显示当前在地图上的位置
+
+#### 📝 标注模式
+
+- **交互式地图**：支持缩放、拖拽浏览大地图
+- **分类筛选**：按类别筛选标记点（魔力之源、宠物、道具等）
+- **图标渲染**：自动下载并渲染分类图标
+- **瓦片导出**：将带标注的地图导出为瓦片
+
+```bash
+# 启动 GUI 应用程序
+python main.py
+```
+
+---
+
+## 📋 安装要求
+
+### 系统要求
+
+- Windows 10/11
+- Python 3.12
+
+### Python 依赖
 
 ```bash
 pip install -r requirements.txt
 ```
 
-依赖列表：
+主要依赖项：
 
-| 包 | 用途 |
-|----|------|
-| PyQt6 | GUI框架 |
-| opencv-python | SIFT特征提取、FLANN匹配、图像处理 |
-| mss | 屏幕截图 |
-| numpy | 数值计算 |
+| 包名 | 版本 | 用途 |
+|------|------|------|
+| PyQt6 | >=6.6.1 | GUI 界面 |
+| opencv-python | >=4.8.1 | 图像处理、SIFT 匹配 |
+| numpy | >=1.26.2 | 数值计算 |
+| mss | >=9.0.1 | 屏幕捕获 |
+| requests | - | HTTP 请求 |
+| pillow | - | 图像拼接 |
 
-## 使用方法
+---
 
-### 1. 分割瓦片（首次使用）
+## ⚙️ 配置文件
 
-将原始大图 `big_map.png` 和标注大图 `big_map_mark.png` 放到项目根目录，然后运行：
+### config.json
 
-```bash
-python split_bitmap.py
+```json
+{
+  "top": 95,
+  "left": 2330,
+  "width": 150,
+  "height": 150,
+  "sift_nfeatures": 1000,
+  "ratio_threshold": 0.75,
+  "min_good_matches": 5,
+  "max_fps": 30,
+  "show_fps": true
+}
 ```
 
-脚本会自动将两张大图按 256×256 切割，分别输出到 `images/` 和 `mark/` 目录。瓦片坐标从左上角 `(-12, -9)` 开始，向右 x 递增，向下 y 递增。
+| 参数 | 说明 |
+|------|------|
+| `top/left/width/height` | 截图区域坐标和尺寸 |
+| `sift_nfeatures` | SIFT 特征点数量 |
+| `ratio_threshold` | 匹配比率阈值（Lowe's ratio test）|
+| `min_good_matches` | 最小有效匹配数 |
+| `max_fps` | 最大帧率限制 |
+| `show_fps` | 是否显示 FPS |
 
-如需修改起始坐标，编辑 `split_bitmap.py` 顶部的 `X_START` 和 `Y_START`。
+---
 
-### 2. 运行匹配器
+## 📦 打包可执行文件
 
-```bash
-python main.py
-```
-
-操作流程：
-
-1. **加载瓦片** - 点击"加载瓦片"按钮，程序会加载所有瓦片并预计算 SIFT 特征，构建 FLANN 索引
-2. **配置参数** - 设置截图区域（Top/Left/Width/Height）和匹配参数
-3. **开始匹配** - 点击"开始匹配"，程序无限循环截图并匹配，置顶窗口显示标注图
-4. **停止匹配** - 再次点击按钮停止
-
-### 置顶窗口操作
-
-- **拖拽移动** - 鼠标左键拖拽窗口
-- **ESC** - 隐藏窗口
-
-## 配置参数
-
-通过 GUI 界面修改，自动保存到 `config.json`：
-
-| 参数 | 默认值 | 说明 |
-|------|--------|------|
-| top | 60 | 截图区域上边距 |
-| left | 2293 | 截图区域左边距 |
-| width | 223 | 截图宽度 |
-| height | 223 | 截图高度 |
-| sift_nfeatures | 1000 | SIFT 特征点数量 |
-| ratio_threshold | 0.75 | Lowe 比率测试阈值，越小越严格 |
-| min_good_matches | 3 | 最少优质匹配数 |
-| show_fps | false | 是否在置顶窗口显示帧数 |
-
-## 匹配原理
-
-1. **截图** - 使用 mss 截取屏幕指定区域
-2. **SIFT 特征提取** - 对截图计算 SIFT 关键点和描述子
-3. **FLANN 快速匹配** - 与预构建的全局 FLANN 索引做 KNN 匹配，比率测试筛选优质匹配
-4. **RANSAC 过滤** - 用单应性矩阵剔除几何不一致的离群匹配点
-5. **绝对位置计算** - 通过匹配点推算截图在瓦片地图中的绝对坐标，取中位数确保鲁棒
-6. **位置稳定** - EMA 平滑 + 跳变检测，防止干扰导致画面闪烁
-7. **标注图合成** - 以截图中心为基准，从 mark 目录合成 400×400 标注图并显示
-
-## 注意事项
-
-- 瓦片命名格式为 `x_y.png`，x 和 y 可为负数
-- 截图区域可能跨越 1~4 张瓦片，程序会自动判定并拼接
-- 置顶窗口中心红点标记截图中心位置
-
-### 3. 打包匹配器
+使用 PyInstaller 打包为独立可执行文件：
 
 ```bash
-pyinstaller.exe roco.spec --noconfirm
+# 安装 PyInstaller
+pip install pyinstaller
+
+# 打包主程序
+pyinstaller roco.spec
 ```
+
+打包后的文件位于 `dist/` 目录下。
+
+---
+
+## 🗺️ 地图数据来源
+
+- 瓦片服务器：`http://ue.17173cdn.com/a/terra/tiles/rocom/`
+- 标记 API：`http://terra-api.17173.com/app/location/list`
+- 地图网站：https://map.17173.com/rocom/maps/shijie
+
+---
+
+## ⚠️ 免责声明
+
+本项目仅供学习交流使用，不得用于任何商业用途。游戏数据版权归腾讯游戏/洛克王国官方所有。
+
+---
+
+## 📄 许可证
+
+MIT License
+
+---
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+---
+
+## 📞 联系方式
+
+如有问题或建议，请在 GitHub 上提交 Issue。

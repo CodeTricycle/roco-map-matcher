@@ -1,0 +1,25 @@
+{
+  "z": 13,
+  "tx_min": 4064,
+  "ty_min": 4064,
+  "tx_max": 4095,
+  "ty_max": 4095,
+  "cols": 32,
+  "rows": 32,
+  "tiles_dir": "D:\\pycharm\\roco\\images",
+  "stitched": "D:\\pycharm\\roco\\big_map.png",
+  "image_size": [
+    8192,
+    8192
+  ],
+  "bounds": [
+    -1.4,
+    0.0,
+    0.0,
+    1.4
+  ],
+  "tile_size": 256,
+  "tile_url_template": "http://ue.17173cdn.com/a/terra/tiles/rocom/4010_v3_7f2d9c/{z}/{y}_{x}.png?v1",
+  "map_id": 4010,
+  "map_version": "v3_7f2d9c"
+}

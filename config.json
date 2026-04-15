@@ -1,12 +1,13 @@
 {
   "top": 95,
   "left": 2330,
-  "width": 150,
-  "height": 150,
+  "width": 156,
+  "height": 156,
   "match_interval": 500,
-  "sift_nfeatures": 1000,
-  "ratio_threshold": 0.75,
+  "sift_nfeatures": 400,
+  "ratio_threshold": 0.65,
   "min_good_matches": 5,
   "template_threshold": 0.4,
-  "show_fps": true
+  "show_fps": true,
+  "max_fps": 30
 }
